@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import Index from "@/components/Login/Index.vue";
+import Index from "@/components/Auth/Register.vue";
 
 export default {
-  name: "Login",
+  name: "Registrasi",
   components: {
     Index,
   },

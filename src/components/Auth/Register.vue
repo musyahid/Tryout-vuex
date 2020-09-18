@@ -32,7 +32,7 @@
       </div>
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
-          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Full Name</label>
+          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>User Name</label>
         </div>
         <div class="md:w-2/3">
           <input
@@ -45,7 +45,7 @@
       </div>
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
-          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Full Name</label>
+          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Password</label>
         </div>
         <div class="md:w-2/3">
           <input
@@ -58,7 +58,7 @@
       </div>
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
-          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Full Name</label>
+          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Email</label>
         </div>
         <div class="md:w-2/3">
           <input
@@ -71,7 +71,7 @@
       </div>
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
-          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Full Name</label>
+          <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for>Phone Number</label>
         </div>
         <div class="md:w-2/3">
           <input
@@ -95,24 +95,25 @@
   </div>
 </template>
 
+
+
 <script>
 import { mapActions } from "vuex";
 export default {
   name: "Register",
   data() {
     return {
-      full_name: "full name",
-      username: "user1",
-      password: "123123",
-      email: "mail@mail.com",
-      phone_number: "9090909090",
+      full_name: "musyahid",
+      username: "ilham",
+      password: "123456",
+      email: "musyahid21@gmail.com",
+      phone_number: "087733934282",
       alert: [],
     };
   },
   methods: {
     checkForm(e) {
       let error = [];
-
       if (this.full_name === "") error.push("Full name Required");
       if (this.username === "") error.push("Username Required");
       if (this.password === "") error.push("Password name Required");
@@ -129,7 +130,6 @@ export default {
           email: this.email,
           phone_number: this.phone_number,
         };
-
         this.registerAction(payload);
       }
       e.preventDefault();

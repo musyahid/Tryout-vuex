@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Login from "@/views/Login.view";
+import Login from "@/views/Auth/Login.view";
 
 
 Vue.use(VueRouter);
@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: "/register",
-    component: () => import("@/views/Auth/Register"),
+    component: () => import("@/views/Auth/Registrasi"),
   },
   {
     path: "/products",

@@ -188,8 +188,17 @@ export default new Vuex.Store({
     },
 
     async registerAction({ commit }, payload) {
+      console.log({"dahaha": payload})
       commit("setBoolean", { key: "postLoading", value: true });
-      Api.post("/auth/signup", JSON.stringify({ data: payload }))
+      Api.post("/auth/signup", JSON.stringify({
+        "data" : {
+          "full_name" : payload.full_name,
+          "username" : payload.username,
+          "email" : payload.email,
+          "password" : payload.password,
+          "phone_number" : payload.phone_number 
+        }
+      }))
         .then((res) => {
           console.log({ res });
         })
