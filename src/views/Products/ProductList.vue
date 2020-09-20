@@ -1,5 +1,11 @@
 <template>
      <div class="w-full p-3">
+        <div class="vld-parent">
+          <loading :active.sync="isLoading" 
+          :can-cancel="true" 
+          :on-cancel="onCancel"
+          :is-full-page="fullPage"></loading>
+        </div>
     <button
       class="bg-blue-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
       type="button"
@@ -17,6 +23,7 @@
     >
       DOWNLOAD REPORT
     </button>
+        <toast position="ne"></toast>
     
     <div
       v-if="showModal"
@@ -124,7 +131,7 @@
                             <td>{{product.name}}</td>
                             <td><img width="100"  v-bind:src="product.photo_url" alt="Sunset in the mountains"></td>
                             <td>{{product.stock}}</td>
-                            <td>{{product.price}}</td>
+                            <td> {{ product.price | currency }}</td>
                             <td>{{product.supplier['full_name']}}</td>
                             <td>
                             <a href=""><router-link
@@ -139,13 +146,25 @@
             </div>
         </div>
         <!--/table Card-->
+
     </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+import { Toast, ADD_TOAST_MESSAGE } from 'vuex-toast'
+
+import 'vuex-toast/dist/vuex-toast.css'
 
 export default {
+
+  components: {
+    Toast,
+    Loading
+  },
+
   name: "ProductList",
     data() {
       return {
@@ -154,11 +173,17 @@ export default {
         price: "",
         image: "",
         userId: "",
+        isLoading: false,
+        fullPage: true,
         showModal: false,
       };
     },
   created() {
-    this.getProduct();
+    this.isLoading = true;
+    setTimeout(() => {
+      this.getProduct();
+      this.isLoading = false
+    },2000)
   },
 
   methods: {
@@ -166,6 +191,7 @@ export default {
       let Confirm = confirm("Are you sure delete data?");
       if(Confirm) {
           this.deleteProduct(id)
+          this.sendNotification("Data Berhasil Dihapus");
       }
     },
     downloadFile() {
@@ -202,6 +228,16 @@ export default {
       return false;
     },
     ...mapActions(["getProduct", "downloadAllFile", "productAction", "deleteProduct"]),
+    ...mapActions({
+      addToast: ADD_TOAST_MESSAGE
+    }),
+    sendNotification(text) {
+      this.addToast({
+        text,
+        type: 'success',
+        dismissAfter: 2000
+      })
+    }
   },
   computed: {
     ...mapState(["products"]),

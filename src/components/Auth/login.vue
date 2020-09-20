@@ -1,7 +1,14 @@
 <template>
   <div class="mx-auto">
     <div class="w-full max-w-xs mx-auto mt-8">
+        <div class="vld-parent">
+          <loading :active.sync="isLoading" 
+          :can-cancel="true" 
+          :on-cancel="onCancel"
+          :is-full-page="fullPage"></loading>
+        </div>
       <div class="alert" v-if="errorMessage!==''">{{errorMessage}}</div>
+      <toast position="ne"></toast>
       <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" @submit="sendRequest">
         <h1 class="text-gray-700 font-bold mt-4 mb-8 text-xl">Login</h1>
         <!-- Login -->
@@ -51,20 +58,40 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+import { Toast, ADD_TOAST_MESSAGE } from 'vuex-toast'
+
+import 'vuex-toast/dist/vuex-toast.css'
+
 export default {
+  components: {
+    Loading,
+    Toast
+  },
   name: "Login",
   data: () => ({
     username: "",
     password: "",
+    isLoading: false,
+    fullPage: true
   }),
-  created() {
-    // this.reqLogin();
-  },
   computed: {
     ...mapState("Auth", ["errorMessage"]),
   },
   methods: {
     ...mapActions("Auth", ["reqLogin"]),
+        ...mapActions({
+      addToast: ADD_TOAST_MESSAGE
+    }),
+    sendNotification(text) {
+      this.addToast({
+        text,
+        type: 'success',
+        dismissAfter: 5000
+      })
+    },
+    
     sendRequest(e) {
       e.preventDefault();
       const error = [];
@@ -78,10 +105,16 @@ export default {
       if (error.length > 0) {
         alert(error.join(",\r\n"));
       } else {
-        this.reqLogin({ username: this.username, password: this.password });
+        this.isLoading = true;
+        setTimeout(() => {
+          this.reqLogin({ username: this.username, password: this.password });
+          this.isLoading = false
+          this.sendNotification("Login Berhasil");
+        },2000)
       }
       return false;
     },
+    
   },
 };
 </script>

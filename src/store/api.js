@@ -16,10 +16,6 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     console.log({ request: config });
-    // const newH = config.headers;
-    // const token = "";
-    // newH.authentication = `Beader ${token}`;
-    // config.headers = newH;
     return config;
   },
   (error) => Promise.reject(error)

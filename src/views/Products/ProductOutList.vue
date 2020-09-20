@@ -1,6 +1,12 @@
 <template>
      <div class="w-full p-3">
-          <div>
+        <div class="vld-parent">
+          <loading :active.sync="isLoading" 
+          :can-cancel="true" 
+          :on-cancel="onCancel"
+          :is-full-page="fullPage"></loading>
+        </div>
+      <div>
     <button
       class="bg-blue-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
       type="button"
@@ -10,6 +16,15 @@
       ADD PRODUCT OUT
     </button>
 
+    <button class="bg-blue-600 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+
+      type="button"
+      style="transition: all .15s ease"
+      v-on:click="downloadFile()"
+    >
+      DOWNLOAD REPORT PRODUCT IN
+    </button>
+    <toast position="ne"></toast>
     <div
       v-if="showModal"
       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
@@ -118,19 +133,36 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+import { Toast, ADD_TOAST_MESSAGE } from 'vuex-toast'
+
+import 'vuex-toast/dist/vuex-toast.css'
 
 export default {
+
+  components: {
+    Toast,
+    Loading
+  },
+
   name: "ProductOutList",
     data() {
       return {
         product_name: "",
         total: "",
         showModal: false,
+        isLoading: false,
+        fullPage: true
       };
     },
   created() {
     this.getProduct();
-    this.getProductOut();
+    this.isLoading = true;
+    setTimeout(() => {
+      this.getProductOut();
+      this.isLoading = false
+    },2000)
   },
 
   methods: {
@@ -138,7 +170,11 @@ export default {
       let Confirm = confirm("Are you sure delete data?");
       if(Confirm) {
           this.deleteProductOut(id)
+          this.sendNotification("Data Berhasil Dihapus");
       }
+    },
+    downloadFile() {
+      this.downloadOutFile()
     },
     toggleModal() {
         this.showModal = true;
@@ -164,7 +200,17 @@ export default {
       e.preventDefault();
       return false;
     },
-    ...mapActions(["getProductOut", "getProduct", "productOutAction", "deleteProductOut"]),
+    ...mapActions(["getProductOut", "downloadOutFile", "getProduct", "productOutAction", "deleteProductOut"]),
+    ...mapActions({
+      addToast: ADD_TOAST_MESSAGE
+    }),
+    sendNotification(text) {
+      this.addToast({
+        text,
+        type: 'success',
+        dismissAfter: 2000
+      })
+    }
   },
   computed: {
     ...mapState(["productsOut", "products"]),

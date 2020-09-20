@@ -3,6 +3,7 @@ import Vuex from "vuex";
 // import Axios from "axios";
 import Api from "./api";
 import createPersistedState from "vuex-persistedstate";
+import { createModule } from 'vuex-toast'
 
 import router from "../router/index";
 
@@ -59,7 +60,7 @@ const Auth = {
               username: data.username,
             })
           );
-          router.push("/dashboard");
+          router.push("/");
 
           // console.log({ res });
         })
@@ -89,20 +90,10 @@ export default new Vuex.Store({
     posts: [],
     postLoading: false,
     post: null,
+    notifications: []
   },
   mutations: {
-    // harus syncronus
-    // method(stae,value)
-    inc(state) {
-      state.score++;
-    },
-    dec(state) {
-      state.score--;
-    },
-    showCount(state) {
-      console.log("showCount store");
-      console.log(state.score);
-    },
+
     getUsersList(state, payload) {
       state.users = payload.data;
     },
@@ -198,6 +189,7 @@ export default new Vuex.Store({
       commit("getProductsOutList", data.data);
     },
 
+    //DOWNLOAD FILE
     async downloadAllFile({ commit }) {
       const { data } = await Api.get('/print/?type=all')
       commit("getDownloadAllFile", data.data);
@@ -247,7 +239,12 @@ export default new Vuex.Store({
       formData.append("name",  payload.name)
       formData.append("stock", payload.stock)
       formData.append("price", payload.price)
-      Api.post("/product", formData, {})
+      Api.post("/product", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+      })
         .then((res) => {
           console.log({ res });
         })
@@ -330,7 +327,7 @@ export default new Vuex.Store({
           console.log({ errr: errr.message });
         });
     },
-    
+
   },
   getters: {
     // untuk memanipulasi data state
@@ -339,6 +336,9 @@ export default new Vuex.Store({
   },
   modules: {
     Auth,
+    toast: createModule({
+      dismissInterval: 8000
+    })
   },
   plugins: [createPersistedState()],
 });

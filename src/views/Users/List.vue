@@ -1,5 +1,11 @@
 <template>
      <div class="w-full p-3">
+        <div class="vld-parent">
+          <loading :active.sync="isLoading" 
+          :can-cancel="true" 
+          :on-cancel="onCancel"
+          :is-full-page="fullPage"></loading>
+        </div>
         <!--Table Card-->
         <div class="bg-white border rounded shadow">
             <div class="border-b p-3">
@@ -21,10 +27,13 @@
                             <td>{{user.full_name}}</td>
                             <td>{{user.username}}</td>
                             <td>{{user.email}}</td>
-                            <td><a href=""><router-link
+                            <td>
+                                                             <a href=""><router-link
                             :to="{name:'userDetail',params:{id:user.id}}"
-                            class="hover:text-red-500"
-                            >DETAIL |</router-link></a></td>
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded"
+                            >DETAIL</router-link></a>
+                            </td>
+
                         </tr>
                     </tbody>
                 </table>
@@ -36,11 +45,27 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
+  components: {
+    Loading
+  },
+
   name: "UserList",
+    data() {
+      return {
+        isLoading: false,
+        fullPage: true
+      };
+    },
   created() {
-    this.getUser();
+    this.isLoading = true;
+    setTimeout(() => {
+        this.getUser();
+      this.isLoading = false
+    },2000)
   },
 
   methods: {

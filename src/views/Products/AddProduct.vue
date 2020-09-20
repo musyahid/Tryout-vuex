@@ -14,7 +14,6 @@
                             <th class="text-left text-blue-900">PRODUCT NAME</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <tr v-for="(product, i) in productsIn" :key="i">
                             <td>{{product.date}}</td>
