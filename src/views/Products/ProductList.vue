@@ -1,14 +1,24 @@
 <template>
      <div class="w-full p-3">
     <button
-      class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+      class="bg-blue-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
       type="button"
       style="transition: all .15s ease"
       v-on:click="toggleModal()"
     >
       ADD PRODUCT
     </button>
-        <div
+
+    <button class="bg-blue-600 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+
+      type="button"
+      style="transition: all .15s ease"
+      v-on:click="downloadFile()"
+    >
+      DOWNLOAD REPORT
+    </button>
+    
+    <div
       v-if="showModal"
       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
     >
@@ -70,11 +80,7 @@
                 for="price"
                 >Image</label
               >
-              <input
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="price"
-                type="sdsd" v-model="price"
-              />
+              <input type="file" @change="processFile($event)">
             </div>
 
             <div class="flex items-center justify-between">
@@ -105,6 +111,7 @@
                     <thead>
                         <tr>
                             <th class="text-left text-blue-900">PRODUCT NAME</th>
+                            <th class="text-left text-blue-900">IMAGE</th>
                             <th class="text-left text-blue-900">STOCK</th>
                             <th class="text-left text-blue-900">PRICE</th>
                             <th class="text-left text-blue-900">SUPPLIER</th>
@@ -115,19 +122,17 @@
                     <tbody>
                         <tr v-for="(product, i) in products" :key="i">
                             <td>{{product.name}}</td>
+                            <td><img width="100"  v-bind:src="product.photo_url" alt="Sunset in the mountains"></td>
                             <td>{{product.stock}}</td>
                             <td>{{product.price}}</td>
                             <td>{{product.supplier['full_name']}}</td>
+                            <td>
                             <a href=""><router-link
                             :to="{name:'productDetail',params:{id:product.id}}"
-                            class="hover:text-red-500"
-                            >DETAIL |</router-link><router-link
-                            :to="{name:'productDetail',params:{id:product.id}}"
-                            class="hover:text-red-500"
-                            >EDIT|</router-link><router-link
-                            :to="{name:'productDetail',params:{id:product.id}}"
-                            class="hover:text-red-500"
-                            >DELETE </router-link></a>
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded"
+                            >DETAIL</router-link></a> ||
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="deletePrd(product.id)">Delete</button> 
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -136,8 +141,6 @@
         <!--/table Card-->
     </div>
 </template>
-
-
 
 <script>
 import { mapState, mapActions } from "vuex";
@@ -155,14 +158,26 @@ export default {
       };
     },
   created() {
-
     this.getProduct();
   },
 
   methods: {
-      toggleModal() {
-        this.showModal = !this.showModal;
-      },
+    deletePrd(id) {
+      let Confirm = confirm("Are you sure delete data?");
+      if(Confirm) {
+          this.deleteProduct(id)
+      }
+    },
+    downloadFile() {
+      this.downloadAllFile()
+    },
+    processFile(event) {
+        this.dataFile = event.target.files[0].name
+    },
+    
+    toggleModal() {
+      this.showModal = !this.showModal;
+    },
       checkForm(e) {
       let error = [];
       if (this.product_name === "") error.push("Product name Required");
@@ -172,18 +187,21 @@ export default {
       if (error.length > 0) {
         this.alert = error;
       } else {
+        
         const payload = {
           name: this.product_name,
           stock: this.stock,
           price: this.price,
+          photo: this.dataFile
         };
-        console.log(payload)
-        this.productInAction(payload);
+        
+        console.log({"data" : payload})
+        this.productAction(payload);
       }
       e.preventDefault();
       return false;
     },
-    ...mapActions(["getProduct", "productInAction"]),
+    ...mapActions(["getProduct", "downloadAllFile", "productAction", "deleteProduct"]),
   },
   computed: {
     ...mapState(["products"]),

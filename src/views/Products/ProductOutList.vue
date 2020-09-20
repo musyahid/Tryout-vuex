@@ -2,7 +2,7 @@
      <div class="w-full p-3">
           <div>
     <button
-      class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+      class="bg-blue-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
       type="button"
       style="transition: all .15s ease"
       v-on:click="toggleModal()"
@@ -72,7 +72,7 @@
               <button
                 class="text-blue-500 text-center font-bold"
                 style="transition: all .15s ease"
-                v-on:click="toggleModal()"
+                v-on:click="toggleModalClose()"
               >
                 Cancel
               </button>
@@ -93,17 +93,20 @@
                 <table class="w-full p-5 text-gray-700">
                     <thead>
                         <tr>
-                            <th class="text-left text-blue-900">DATE</th>
-                            <th class="text-left text-blue-900">TOTAL</th>
-                            <th class="text-left text-blue-900">PRODUCT NAME</th>
+                            <th class="text-center text-blue-900 ">DATE</th>
+                            <th class="text-center text-blue-900">IMAGE</th>
+                            <th class="text-center text-blue-900">TOTAL</th>
+                            <th class="text-center text-blue-900">PRODUCT NAME</th>
                         </tr>
                     </thead>
 
                     <tbody> 
-                        <tr v-for="(product, i) in productsOut" :key="i">
-                            <td>{{product.date}}</td>
-                            <td>{{product.total}}</td>
-                            <td>{{product.Product['name']}}</td>
+                        <tr v-for="(product, i) in productsOut" :key="i"  >
+                            <td class="text-center">{{product.date | moment("dddd, MMMM Do YYYY") }}</td>
+                            <td class="text-center"><img width="100"  v-bind:src="product.Product['photo_url']" alt="Sunset in the mountains"></td>
+                            <td > <p class="bg-teal-500 text-white text-center" >{{product.total}}</p> </td>
+                            <td class="text-center">{{product.Product['name']}}</td>
+                            <td class="text-center"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="deleteProduct(product.id)">Delete</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -131,8 +134,17 @@ export default {
   },
 
   methods: {
+    deleteProduct(id) {
+      let Confirm = confirm("Are you sure delete data?");
+      if(Confirm) {
+          this.deleteProductOut(id)
+      }
+    },
     toggleModal() {
-        this.showModal = !this.showModal;
+        this.showModal = true;
+      },
+    toggleModalClose() {
+        this.showModal = false;
       },
       checkForm(e) {
       let error = [];
@@ -147,11 +159,12 @@ export default {
           total: this.total
         };
         this.productOutAction(payload);
+        this.showModal = false;
       }
       e.preventDefault();
       return false;
     },
-    ...mapActions(["getProductOut", "getProduct", "productOutAction"]),
+    ...mapActions(["getProductOut", "getProduct", "productOutAction", "deleteProductOut"]),
   },
   computed: {
     ...mapState(["productsOut", "products"]),

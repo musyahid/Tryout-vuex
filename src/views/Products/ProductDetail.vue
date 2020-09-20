@@ -8,6 +8,7 @@
             <div class="p-5">
                 <table class="py-5 text-gray-700">
                     <thead v-if="detailProduct">
+                        <img width="200"  v-bind:src="detailProduct.photo_url" alt="Sunset in the mountains">
                         <tr>
                             <th class="text-left my-6 text-blue-900">NAME</th>
                             <th> : </th>

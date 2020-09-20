@@ -47,7 +47,6 @@ const Auth = {
             data: { data },
           } = res;
           commit("saveLogin", data);
-          console.log({"ini token" : data.token})
           localStorage.setItem("token", data.token);
           // Api.defaults.headers.common['Authorization'] = data.token
           localStorage.setItem(
@@ -83,6 +82,10 @@ export default new Vuex.Store({
     productsOut: [],
     detailUser: null,
     detailProduct: null,
+    detailProductIn: null,
+    downloadAllFile: [],
+    downloadInFile: [],
+    downloadOutFile: [],
     posts: [],
     postLoading: false,
     post: null,
@@ -112,11 +115,23 @@ export default new Vuex.Store({
     getProductsOutList(state, payload) {
       state.productsOut = payload.data;
     },
+    getDownloadAllFile(state, payload) {
+      state.downloadAllFile = payload.data;
+    },
+    getDownloadInFile(state, payload) {
+      state.downloadInFile = payload.data;
+    },
+    getDownloadOutFile(state, payload) {
+      state.downloadOutFile = payload.data;
+    },
     setDetailUser(state, payload) {
       state.detailUser = payload.data;
     },
     setDetailProduct(state, payload) {
       state.detailProduct = payload.data;
+    },
+    setDetailProductIn(state, payload) {
+      state.detailProductIn = payload.data;
     },
     setBoolean(state, payload) {
       console.log({ payload });
@@ -131,10 +146,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    //action untuk asyncronus
-    async loadCities() {
-      // const {data} = await Axios
-    },
+    // USER
     async getUser({ commit }) {
       const { data } = await Api.get('/user')
       commit("getUsersList", data.data);
@@ -149,6 +161,9 @@ export default new Vuex.Store({
         console.log({ error: error.message });
       }
     },
+    // END USER
+
+    //PRODUCT
     async getProduct({ commit }) {
       const { data } = await Api.get('/product')
       commit("getProductsList", data.data);
@@ -163,30 +178,44 @@ export default new Vuex.Store({
         console.log({ error: error.message });
       }
     },
+    async getDetailProductIn({ commit }, id) {
+      console.log(commit)
+      try {
+        const { data } = await Api.get(`/in/${id}`);
+        console.log(data.data);
+        commit("setDetailProductIn",  data);
+      } catch (error) {
+        console.log({ error: error.message });
+      }
+    },
     async getProductIn({ commit }) {
       const { data } = await Api.get('/in')
       commit("getProductsInList", data.data);
     },
+    
     async getProductOut({ commit }) {
       const { data } = await Api.get('/out')
       commit("getProductsOutList", data.data);
     },
 
-    async allPost({ commit }) {
-      commit("setBoolean", { key: "postLoading", value: true });
-      const { data } = await Api.get("/posts");
-      console.log({ allpost: data });
-      commit("setDataPost", { data });
-      commit("setBoolean", { key: "postLoading", value: false });
-    },
-    async detailPost({ commit }, id) {
-      commit("setBoolean", { key: "postLoading", value: true });
-      const { data } = await Api.get(`/posts/${id}`);
-      commit("setPost", data);
-      // console.log({ data });
-      commit("setBoolean", { key: "postLoading", value: false });
+    async downloadAllFile({ commit }) {
+      const { data } = await Api.get('/print/?type=all')
+      commit("getDownloadAllFile", data.data);
     },
 
+    async downloadInFile({ commit }) {
+      const { data } = await Api.get('/print/?type=in')
+      commit("getDownloadInFile", data.data);
+    },
+
+    async downloadOutFile({ commit }) {
+      const { data } = await Api.get('/print/?type=out')
+      commit("getDownloadOutFile", data.data);
+    },
+    //END PRODUCT
+
+
+    //REGISTRASI
     async registerAction({ commit }, payload) {
       console.log({"dahaha": payload})
       commit("setBoolean", { key: "postLoading", value: true });
@@ -208,6 +237,27 @@ export default new Vuex.Store({
       // console.log({ registerAction: data });
       commit("setBoolean", { key: "postLoading", value: false });
     },
+    //END REGISTRASI
+
+    //========== POST DATA =============================
+    async productAction({ commit }, payload) {
+      commit("setBoolean", { key: "postLoading", value: true });
+      const formData = new FormData();
+      formData.append("photo", payload.photo)
+      formData.append("name",  payload.name)
+      formData.append("stock", payload.stock)
+      formData.append("price", payload.price)
+      Api.post("/product", formData, {})
+        .then((res) => {
+          console.log({ res });
+        })
+        .catch((errr) => {
+          console.log({ errr: errr.message });
+        });
+      // console.log({ registerAction: data });
+      commit("setBoolean", { key: "postLoading", value: false });
+    },
+
     async productOutAction({ commit }, payload) {
       commit("setBoolean", { key: "postLoading", value: true });
       Api.post("/out", JSON.stringify({
@@ -218,6 +268,7 @@ export default new Vuex.Store({
       }))
         .then((res) => {
           console.log({ res });
+          window.location.reload(true);
         })
         .catch((errr) => {
           console.log({ errr: errr.message });
@@ -225,6 +276,7 @@ export default new Vuex.Store({
       // console.log({ registerAction: data });
       commit("setBoolean", { key: "postLoading", value: false });
     },
+
     async productInAction({ commit }, payload) {
       commit("setBoolean", { key: "postLoading", value: true });
       Api.post("/in", JSON.stringify({
@@ -235,6 +287,7 @@ export default new Vuex.Store({
       }))
         .then((res) => {
           console.log({ res });
+          window.location.reload(true);
         })
         .catch((errr) => {
           console.log({ errr: errr.message });
@@ -242,6 +295,42 @@ export default new Vuex.Store({
       // console.log({ registerAction: data });
       commit("setBoolean", { key: "postLoading", value: false });
     },
+
+    // ========== DELETE DATA =============================
+    async deleteProduct({ commit }, id) {
+      console.log({"commit" : commit, "id" : id})
+      Api.delete("/product/" + id)
+        .then((res) => {
+          console.log({ res });
+          window.location.reload(true);
+        })
+        .catch((errr) => {
+          console.log({ errr: errr.message });
+        });
+    },
+    async deleteProductIn({ commit }, id) {
+      console.log({"commit" : commit, "id" : id})
+      Api.delete("/in/" + id)
+        .then((res) => {
+          console.log({ res });
+          window.location.reload(true);
+        })
+        .catch((errr) => {
+          console.log({ errr: errr.message });
+        });
+    },
+    async deleteProductOut({ commit }, id) {
+      console.log({"commit" : commit, "id" : id})
+      Api.delete("/out/" + id)
+        .then((res) => {
+          console.log({ res });
+          window.location.reload(true);
+        })
+        .catch((errr) => {
+          console.log({ errr: errr.message });
+        });
+    },
+    
   },
   getters: {
     // untuk memanipulasi data state

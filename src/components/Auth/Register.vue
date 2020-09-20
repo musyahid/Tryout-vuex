@@ -104,10 +104,10 @@ export default {
   data() {
     return {
       full_name: "musyahid",
-      username: "ilham",
+      username: "ilhamsyahid",
       password: "123456",
-      email: "musyahid21@gmail.com",
-      phone_number: "087733934282",
+      email: "musyahid2122@gmail.com",
+      phone_number: "0876353434",
       alert: [],
     };
   },

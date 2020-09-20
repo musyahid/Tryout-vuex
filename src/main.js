@@ -4,8 +4,10 @@ import App from "./App.vue";
 import store from "./store";
 import router from "./router";
 
+
 import "@/assets/styles/main.css";
 
+Vue.use(require('vue-moment'));
 Vue.config.productionTip = false;
 
 // Vue.component("Ads", () => import("@/components/Ads"));
