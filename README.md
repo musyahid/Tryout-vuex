@@ -7,16 +7,16 @@
 
 -   [x] All User
 -   [x] All Product
--   [ ] Total User
--   [ ] Total Product
--   [ ] Total Product IN
+-   [x] Total User
+-   [x] Total Product
+-   [x] Total Product IN
 -   [x] Total Product OUT
 -   [x] User By ID
 -   [x] Product By ID
 
 ## Post
 
--   [ ] Post Product
+-   [ ] Post Product Masih 404
 -   [x] Post Product IN
 -   [x] Post Product OUT
 
@@ -34,9 +34,9 @@
 
 ## Download
 
--   [ ] Download Product All
--   [ ] Download Product IN
--   [ ] Download Product OUT
+-   [x] Download Product All
+-   [x] Download Product IN
+-   [x] Download Product OUT
 
 ## Project setup
 
